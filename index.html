@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Cheat Sheet – Hébergement VPS</title>
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      font-family: "Courier New", monospace;
+      color: #e0e0e0;
+      background: #0f0f0f;
+      overflow-x: hidden;
+    }
+
+    /* Fond animé */
+    body::before {
+      content: '';
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: radial-gradient(circle at center, #1a1a1a, #000);
+      z-index: -2;
+    }
+    body::after {
+      content: '';
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: url('https://www.transparenttextures.com/patterns/stardust.png');
+      opacity: 0.05;
+      z-index: -1;
+      animation: move 60s linear infinite;
+    }
+    @keyframes move {
+      0% { background-position: 0 0; }
+      100% { background-position: 1000px 1000px; }
+    }
+
+    h1 {
+      text-align: center;
+      color: #00e676;
+      font-size: 32px;
+      margin-top: 30px;
+    }
+
+    h2 {
+      color: #81c784;
+      cursor: pointer;
+      margin-top: 30px;
+      border-bottom: 1px solid #333;
+      padding-bottom: 5px;
+      transition: all 0.3s ease;
+    }
+
+    h2:hover {
+      color: #b9f6ca;
+      text-shadow: 0 0 5px #00e676;
+    }
+
+    pre {
+      background: #1e1e1e;
+      padding: 15px;
+      border-left: 4px solid #00e676;
+      border-radius: 6px;
+      overflow-x: auto;
+      margin-bottom: 20px;
+      white-space: pre-wrap;
+    }
+
+    .section {
+      margin-left: 250px;
+      padding: 20px;
+      border-bottom: 1px dashed #333;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    /* Menu latéral */
+    #sidebar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 230px;
+      height: 100%;
+      background-color: #121212;
+      border-right: 1px solid #333;
+      padding: 20px;
+      overflow-y: auto;
+    }
+
+    #sidebar h3 {
+      color: #00e676;
+      font-size: 20px;
+      margin-bottom: 15px;
+      text-align: center;
+    }
+
+    #sidebar a {
+      color: #c8e6c9;
+      display: block;
+      margin-bottom: 10px;
+      text-decoration: none;
+      transition: 0.2s;
+    }
+
+    #sidebar a:hover {
+      color: #ffffff;
+      text-shadow: 0 0 5px #00e676;
+    }
+
+    .credit {
+      text-align: center;
+      font-size: 14px;
+      margin: 40px auto 20px;
+      color: #9e9e9e;
+      font-style: italic;
+    }
+
+    code {
+      color: #a5d6a7;
+    }
+
+    .comment {
+      color: #9e9e9e;
+      font-style: italic;
+    }
+
+  </style>
+</head>
+<body>
+
+<div id="sidebar">
+  <h3>📚 Sommaire</h3>
+  <a href="#s1">1. Connexion au VPS</a>
+  <a href="#s2">2. Installer Nginx</a>
+  <a href="#s3">3. Installer PHP</a>
+  <a href="#s4">4. Installer MariaDB</a>
+  <a href="#s5">5. Uploader le site</a>
+  <a href="#s6">6. Nom de domaine</a>
+  <a href="#s7">7. Certificat SSL</a>
+</div>
+
+<h1>📦 Cheat Sheet – Héberger un Site Web sur un VPS</h1>
+
+<div class="section" id="s1">
+  <h2 onclick="toggle('c1')">1. Connexion au VPS</h2>
+  <div id="c1">
+    <pre>
+<code># Se connecter avec l'utilisateur root (ou sudo)
+ssh root@IP_DU_VPS
+</code></pre>
+  </div>
+</div>
+
+<div class="section" id="s2">
+  <h2 onclick="toggle('c2')">2. Installer Nginx</h2>
+  <div id="c2">
+    <pre>
+<code># Mettre à jour les paquets et installer Nginx
+sudo apt update && sudo apt upgrade -y
+sudo apt install nginx -y
+
+# Démarrer le service et le vérifier
+sudo systemctl start nginx
+sudo systemctl enable nginx
+sudo systemctl status nginx
+
+# Tester : http://IP_DU_VPS dans ton navigateur</code></pre>
+  </div>
+</div>
+
+<div class="section" id="s3">
+  <h2 onclick="toggle('c3')">3. Installer PHP</h2>
+  <div id="c3">
+    <pre>
+<code># Installer PHP (adapté pour Nginx) et les extensions utiles
+sudo apt install php-fpm php-mysql -y
+
+# Test rapide : afficher la version
+php -v
+
+# Créer une page de test
+echo "&lt;?php phpinfo(); ?>" | sudo tee /var/www/html/info.php
+
+# Accéder via navigateur : http://IP_DU_VPS/info.php</code></pre>
+  </div>
+</div>
+
+<div class="section" id="s4">
+  <h2 onclick="toggle('c4')">4. Installer MariaDB</h2>
+  <div id="c4">
+    <pre>
+<code># Installer le serveur de base de données
+sudo apt install mariadb-server -y
+
+# Sécuriser l'installation
+sudo mysql_secure_installation
+
+# Créer une base, un utilisateur, et lui donner les droits
+sudo mysql -u root -p
+
+# Commandes SQL :
+CREATE DATABASE monsite;
+CREATE USER 'user'@'localhost' IDENTIFIED BY 'motdepasse';
+GRANT ALL PRIVILEGES ON monsite.* TO 'user'@'localhost';
+FLUSH PRIVILEGES;
+EXIT;</code></pre>
+  </div>
+</div>
+
+<div class="section" id="s5">
+  <h2 onclick="toggle('c5')">5. Uploader les fichiers du site</h2>
+  <div id="c5">
+    <pre>
+<code># Copier les fichiers de ton site sur le VPS
+scp -r monsite/* root@IP_DU_VPS:/var/www/html/
+
+# Appliquer les bons droits
+sudo chown -R www-data:www-data /var/www/html/
+sudo chmod -R 755 /var/www/html/</code></pre>
+  </div>
+</div>
+
+<div class="section" id="s6">
+  <h2 onclick="toggle('c6')">6. Lier un nom de domaine</h2>
+  <div id="c6">
+    <pre>
+<code># Créer un fichier de config pour ton domaine
+sudo nano /etc/nginx/sites-available/tonsite.com
+
+# Exemple de contenu :
+server {
+  listen 80;
+  server_name tonsite.com www.tonsite.com;
+
+  root /var/www/html;
+  index index.php index.html;
+
+  location / {
+    try_files $uri $uri/ =404;
+  }
+
+  location ~ \.php$ {
+    include snippets/fastcgi-php.conf;
+    fastcgi_pass unix:/run/php/php8.1-fpm.sock;
+  }
+}
+
+# Activer le site et recharger nginx
+sudo ln -s /etc/nginx/sites-available/tonsite.com /etc/nginx/sites-enabled/
+sudo nginx -t
+sudo systemctl reload nginx</code></pre>
+  </div>
+</div>
+
+<div class="section" id="s7">
+  <h2 onclick="toggle('c7')">7. Activer HTTPS avec Let's Encrypt</h2>
+  <div id="c7">
+    <pre>
+<code># Installer Certbot pour Nginx
+sudo apt install certbot python3-certbot-nginx -y
+
+# Générer et configurer le certificat
+sudo certbot --nginx
+
+# Renouvellement automatique déjà configuré via cron</code></pre>
+  </div>
+</div>
+
+<div class="credit">
+  🧠 Fait par <strong>Jeunesr</strong> & <strong>ChatGPT 🤖</strong> – 2025
+</div>
+
+<script>
+  function toggle(id) {
+    const el = document.getElementById(id);
+    el.classList.toggle('hidden');
+  }
+</script>
+
+</body>
+</html>
+
